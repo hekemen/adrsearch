@@ -1,4 +1,4 @@
-module github.com/hekemen/address_search
+module github.com/hekemen/adrsearch
 
 go 1.26
 

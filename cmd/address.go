@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hekemen/address_search/service"
+	"github.com/hekemen/adrsearch/service"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
