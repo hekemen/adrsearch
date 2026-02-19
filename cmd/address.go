@@ -26,8 +26,10 @@ func main() {
 		return
 	}
 
+	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+
 	nChan := make(chan service.Neighborhood)
-	grp, mainCtx := errgroup.WithContext(context.Background())
+	grp, mainCtx := errgroup.WithContext(ctx)
 
 	pgContainer, err := service.CreateDatabase(mainCtx)
 	if err != nil {
@@ -65,10 +67,8 @@ func main() {
 
 		return nil
 	})
-	sig := make(chan os.Signal, 1)
-	errChan := make(chan error, 1)
 
-	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+	errChan := make(chan error, 1)
 
 	go func() {
 		if err := grp.Wait(); err != nil {
@@ -77,8 +77,6 @@ func main() {
 	}()
 
 	select {
-	case <-sig:
-		log.Info().Msg("Shutting down gracefully...")
 	case <-mainCtx.Done():
 		log.Info().Msg("Context cancelled, shutting down...")
 	case err := <-errChan:

@@ -17,7 +17,8 @@ type NeighborhoodWithScore struct {
 }
 
 func CreateAndStartHttp(ctx context.Context, vGenerator *VectorGenerator, db *sql.DB) {
-	http.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
 		queryTerm := r.URL.Query().Get("q")
 		if queryTerm == "" {
 			http.Error(w, "Missing query parameter 'q'", http.StatusBadRequest)
@@ -42,5 +43,5 @@ func CreateAndStartHttp(ctx context.Context, vGenerator *VectorGenerator, db *sq
 	})
 
 	log.Info().Msg("🌍 Server started at http://localhost:8081")
-	log.Err(http.ListenAndServe(":8081", nil)).Send()
+	log.Err(http.ListenAndServe(":8081", mux)).Send()
 }
